@@ -28,6 +28,13 @@ body {
     Arial, sans-serif;
 }
 
+/* list 기본 스타일 제거 */
+ul, ol{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
 #app {
   background: linear-gradient(
     240deg,

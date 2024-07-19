@@ -1,14 +1,16 @@
 interface SlotConfigurations {
   /** User configuration for maximum item inside a reel */
   maxReelItems?: number;
+  /** User configuration for number of times the reel spins */
+  spinCount?: number;
   /** User configuration for whether winner should be removed from name list */
   removeWinner?: boolean;
   /** User configuration for element selector which reel items should append to */
   reelContainerSelector: string;
   /** User configuration for callback function that runs before spinning reel */
   onSpinStart?: () => void;
-  /** User configuration for callback function that runs after spinning reel */
-  onSpinEnd?: () => void;
+  /** User configuration for callback async function that runs after spinning reel */
+  onSpinEnd?: (winner: string) => Promise<void>;
 
   /** User configuration for callback function that runs after user updates the name list */
   onNameListChanged?: () => void;
@@ -18,6 +20,9 @@ interface SlotConfigurations {
 export default class Slot {
   /** List of names to draw from */
   private nameList: string[];
+
+  /** Number of times the reel spins */
+  private spinTimes: number;
 
   /** Whether there is a previous winner element displayed in reel */
   private havePreviousWinner: boolean;
@@ -37,7 +42,7 @@ export default class Slot {
   /** Callback function that runs before spinning reel */
   private onSpinStart?: NonNullable<SlotConfigurations['onSpinStart']>;
 
-  /** Callback function that runs after spinning reel */
+  /** Callback async function that runs after spinning reel */
   private onSpinEnd?: NonNullable<SlotConfigurations['onSpinEnd']>;
 
   /** Callback function that runs after spinning reel */
@@ -53,7 +58,8 @@ export default class Slot {
    */
   constructor(
     {
-      maxReelItems = 30,
+      maxReelItems = 10,
+      spinCount = 1,
       removeWinner = true,
       reelContainerSelector,
       onSpinStart,
@@ -65,6 +71,7 @@ export default class Slot {
     this.havePreviousWinner = false;
     this.reelContainer = document.querySelector(reelContainerSelector);
     this.maxReelItems = maxReelItems;
+    this.spinTimes = spinCount;
     this.shouldRemoveWinner = removeWinner;
     this.onSpinStart = onSpinStart;
     this.onSpinEnd = onSpinEnd;
@@ -81,13 +88,23 @@ export default class Slot {
         { transform: `translateY(-${(this.maxReelItems - 1) * (7.5 * 16)}px)`, filter: 'blur(0)' }
       ],
       {
-        duration: this.maxReelItems * 100, // 100ms for 1 item
+        duration: this.maxReelItems * 30, // 30ms for 1 item
         easing: 'ease-in-out',
         iterations: 1
       }
     );
 
     this.reelAnimation?.cancel();
+  }
+
+  /** Setter for spin count */
+  set spinCount(count: number) {
+    this.spinTimes = Math.min(count, this.nameList.length);
+  }
+
+  /** Getter for spin count */
+  get spinCount(): number {
+    return this.spinTimes;
   }
 
   /**
@@ -188,14 +205,14 @@ export default class Slot {
     });
 
     reelContainer.appendChild(fragment);
-
+    const winner = randomNames[randomNames.length - 1];
     console.info('Displayed items: ', randomNames);
-    console.info('Winner: ', randomNames[randomNames.length - 1]);
+    console.info('Winner: ', winner);
 
     // Remove winner form name list if necessary
     if (shouldRemoveWinner) {
       this.nameList.splice(this.nameList.findIndex(
-        (name) => name === randomNames[randomNames.length - 1]
+        (name) => name === winner
       ), 1);
     }
 
@@ -221,7 +238,7 @@ export default class Slot {
     this.havePreviousWinner = true;
 
     if (this.onSpinEnd) {
-      this.onSpinEnd();
+      await this.onSpinEnd(winner);
     }
     return true;
   }

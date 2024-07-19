@@ -13,7 +13,11 @@ import SoundEffects from '@js/SoundEffects';
   const settingsCloseButton = document.getElementById('settings-close') as HTMLButtonElement | null;
   const sunburstSvg = document.getElementById('sunburst') as HTMLImageElement | null;
   const confettiCanvas = document.getElementById('confetti-canvas') as HTMLCanvasElement | null;
-  const nameListTextArea = document.getElementById('name-list') as HTMLTextAreaElement | null;
+  const winnerList = document.getElementById('winner-list') as HTMLUListElement | null;
+  const nameListUlist = document.getElementById('name-list') as HTMLUListElement | null;
+  const spinCountInput = document.getElementById('spin-count') as HTMLInputElement | null;
+  const minusSpinCountButton = document.getElementById('minus-button') as HTMLButtonElement | null;
+  const plusSpinCountButton = document.getElementById('plus-button') as HTMLButtonElement | null;
   const removeNameFromListCheckbox = document.getElementById('remove-from-list') as HTMLInputElement | null;
   const enableSoundCheckbox = document.getElementById('enable-sound') as HTMLInputElement | null;
 
@@ -28,7 +32,11 @@ import SoundEffects from '@js/SoundEffects';
     && settingsCloseButton
     && sunburstSvg
     && confettiCanvas
-    && nameListTextArea
+    && winnerList
+    && nameListUlist
+    && spinCountInput
+    && minusSpinCountButton
+    && plusSpinCountButton
     && removeNameFromListCheckbox
     && enableSoundCheckbox
   )) {
@@ -69,6 +77,14 @@ import SoundEffects from '@js/SoundEffects';
     confettiAnimationId = window.requestAnimationFrame(confettiAnimation);
   };
 
+  /** winner string 을 받아서 ul#winner-list 에 추가하는 함수 */
+  const addWinnerToList = (winner: string) => {
+    const winnerListItem = document.createElement('li');
+    winnerListItem.textContent = winner;
+    winnerList.appendChild(winnerListItem);
+  }
+
+
   /** Function to stop the winning animation */
   const stopWinningAnimation = () => {
     if (confettiAnimationId) {
@@ -86,8 +102,9 @@ import SoundEffects from '@js/SoundEffects';
   };
 
   /**  Functions to be trigger after spinning */
-  const onSpinEnd = async () => {
+  const onSpinEnd = async (winner: string) => {
     confettiAnimation();
+    addWinnerToList(winner);
     sunburstSvg.style.display = 'block';
     await soundEffects.win();
     drawButton.disabled = false;
@@ -105,7 +122,6 @@ import SoundEffects from '@js/SoundEffects';
 
   /** To open the setting page */
   const onSettingsOpen = () => {
-    nameListTextArea.value = slot.names.length ? slot.names.join('\n') : '';
     removeNameFromListCheckbox.checked = slot.shouldRemoveWinnerFromNameList;
     enableSoundCheckbox.checked = !soundEffects.mute;
     settingsWrapper.style.display = 'block';
@@ -118,13 +134,20 @@ import SoundEffects from '@js/SoundEffects';
   };
 
   // Click handler for "Draw" button
-  drawButton.addEventListener('click', () => {
+  drawButton.addEventListener('click', async () => {
     if (!slot.names.length) {
       onSettingsOpen();
       return;
     }
 
-    slot.spin();
+    // winner list clear
+    winnerList.innerHTML = '';
+
+    const slotQueue = Array.from({ length: slot.spinCount }, (_, i) => i + 1);
+    for await (const i of slotQueue) {
+      console.log(`Spinning ${i} of ${slot.spinCount}`);
+      await slot.spin();
+    }
   });
 
   // Hide fullscreen button when it is not supported
@@ -146,14 +169,26 @@ import SoundEffects from '@js/SoundEffects';
     }
   });
 
+  // Click handler for "Minus" button for spin count
+  minusSpinCountButton.addEventListener('click', () => {
+    spinCountInput.stepDown();
+  });
+
+  // Click handler for "Plus" button for spin count
+  plusSpinCountButton.addEventListener('click', () => {
+    spinCountInput.stepUp();
+  });
+
   // Click handler for "Settings" button
   settingsButton.addEventListener('click', onSettingsOpen);
 
   // Click handler for "Save" button for setting page
   settingsSaveButton.addEventListener('click', () => {
-    slot.names = nameListTextArea.value
-      ? nameListTextArea.value.split(/\n/).filter((name) => Boolean(name.trim()))
-      : [];
+    const checkedNameList = nameListUlist.querySelectorAll('input[type="checkbox"]:checked');
+    const checkedNames = Array.from(checkedNameList).map((input: any) => input.value);
+    nameListUlist.dataset.value = slot.names.length ? slot.names.join('\n') : checkedNames.join('\n');
+    slot.names = nameListUlist.dataset.value.split(/\n/).filter((name) => Boolean(name.trim()));
+    slot.spinCount = +spinCountInput.value;
     slot.shouldRemoveWinnerFromNameList = removeNameFromListCheckbox.checked;
     soundEffects.mute = !enableSoundCheckbox.checked;
     onSettingsClose();

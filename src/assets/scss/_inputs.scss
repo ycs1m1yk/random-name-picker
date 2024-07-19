@@ -10,6 +10,11 @@
       margin: 0;
     }
   }
+
+  &--flex-column {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .input-label {
@@ -76,10 +81,27 @@
   }
 }
 
-.input-field--textarea {
-  min-width: 100%;
-  max-width: 100%;
-  resize: vertical;
+.input--number {
+  height: 100%;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.input--number-wrapper {
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  margin: 0 0 1.5rem;
+
+  .input-field {
+    flex: 1;
+    margin: 0 1rem;
+  }
+  & button {
+    height: 100%;
+    width: 3rem;
+    font-size: 1.8rem;
+  }
 }
 
 .input--switch {

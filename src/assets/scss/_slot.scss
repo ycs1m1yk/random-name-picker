@@ -173,6 +173,12 @@
     overflow: auto;
     -webkit-overflow-scrolling: auto;
 
+    #name-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      font-size: 1.4rem;
+    }
     // Worksround for firefox overflow padding bottom issue
     // https://bugzilla.mozilla.org/show_bug.cgi?id=748518
     &__group:last-child {

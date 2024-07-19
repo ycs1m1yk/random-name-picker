@@ -25,13 +25,33 @@ include ../mixins/icons
 
     button#draw-button.solid-button Draw
 
+    h2 Winner List
+        ul#winner-list
+
   #settings.settings
     #settings-panel.settings__panel
       div.settings__panel__group
         h1.settings__title Settings
         div.input-group
           label.input-label(for="name-list") Name List
-          textarea.input-field.input-field--textarea(rows="8" placeholder="Separate each name by line break" id="name-list")
+          - var members = ['구본연', '박주선', '이승호', '이현규', '이혜성', '임우진', '전인구', '차현석', '한기문', '황보현']
+          ul.input-list#name-list
+            each member in members
+              li.input-list__item
+                label.input--checkbox
+                  input(type="checkbox" checked="true" value=member)
+                  span.input-list__item__name= member
+
+
+        div.input-group.input-group--flex-column
+            - var memberCount = 10
+            label.input-label(for="spin-count") Number of winners
+            div.input--number-wrapper
+              button(type="button", id="minus-button") -
+              input.input--number(type="number" value="1" id="spin-count" min="1" max=memberCount)
+              button(type="button", id="plus-button") +
+
+
 
         div.input-group.input-group--2-column
           label.input-label(for="remove-from-list") Remove winner from list
