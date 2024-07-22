@@ -96,11 +96,11 @@ import SoundEffects from '@js/SoundEffects';
   };
 
   /**  Function to be trigger before spinning */
-  const onSpinStart = () => {
+  const onSpinStart = (playbackRate: number) => {
     stopWinningAnimation();
     drawButton.disabled = true;
     settingsButton.disabled = true;
-    soundEffects.spin((MAX_REEL_ITEMS - 1) / 10);
+    soundEffects.spin((MAX_REEL_ITEMS - 1) / 10, 0.1 / playbackRate);
   };
 
   /**  Functions to be trigger after spinning */
@@ -191,8 +191,9 @@ import SoundEffects from '@js/SoundEffects';
     nameListUlist.dataset.value = slot.names.length ? slot.names.join('\n') : checkedNames.join('\n');
     slot.names = nameListUlist.dataset.value.split(/\n/).filter((name) => Boolean(name.trim()));
     slot.spinCount = +spinCountInput.value;
-    const spinSpeed = +spinSpeedInput.value;
-    slot.reelSpeed = 1 + (spinSpeed - 3) * 0.33;
+    const spinSpeed = +spinSpeedInput.value; // 1...5
+    const playBackRates = [0, 0.66, 1, 1.25, 1.75, 2.5];
+    slot.reelSpeed = playBackRates[spinSpeed];
     slot.shouldRemoveWinnerFromNameList = removeNameFromListCheckbox.checked;
     soundEffects.mute = !enableSoundCheckbox.checked;
     onSettingsClose();

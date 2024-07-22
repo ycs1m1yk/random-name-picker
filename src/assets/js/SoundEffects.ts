@@ -117,15 +117,15 @@ export default class SoundEffects {
    * @param durationInSecond  Duration of sound effect in seconds
    * @returns Has sound effect been played
    */
-  public spin(durationInSecond: number): Promise<boolean> {
+  public spin(durationInSecond: number, durationEach: number): Promise<boolean> {
     if (this.isMuted) {
       return Promise.resolve(false);
     }
 
     const musicNotes: SoundSeries[] = [
-      { key: 'D#3', duration: 0.1 },
-      { key: 'C#3', duration: 0.1 },
-      { key: 'C3', duration: 0.1 }
+      { key: 'D#3', duration: durationEach },
+      { key: 'C#3', duration: durationEach },
+      { key: 'C3', duration: durationEach }
     ];
 
     const totalDuration = musicNotes

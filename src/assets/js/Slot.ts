@@ -10,7 +10,7 @@ interface SlotConfigurations {
   /** User configuration for element selector which reel items should append to */
   reelContainerSelector: string;
   /** User configuration for callback function that runs before spinning reel */
-  onSpinStart?: () => void;
+  onSpinStart?: (playbackRate: number) => void;
   /** User configuration for callback async function that runs after spinning reel */
   onSpinEnd?: (winner: string) => Promise<void>;
 
@@ -95,7 +95,7 @@ export default class Slot {
         { transform: `translateY(-${(this.maxReelItems - 1) * (7.5 * 16)}px)`, filter: 'blur(0)' }
       ],
       {
-        duration: this.maxReelItems * 60, // 60ms for 1 item
+        duration: this.maxReelItems * 100, // 100ms for 1 item
         easing: 'ease-in-out',
         iterations: 1
       }
@@ -197,7 +197,7 @@ export default class Slot {
     }
 
     if (this.onSpinStart) {
-      this.onSpinStart();
+      this.onSpinStart(this.spinSpeed);
     }
 
     const { reelContainer, reelAnimation, shouldRemoveWinner } = this;
