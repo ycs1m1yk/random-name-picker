@@ -16,6 +16,7 @@ import SoundEffects from '@js/SoundEffects';
   const winnerList = document.getElementById('winner-list') as HTMLUListElement | null;
   const nameListUlist = document.getElementById('name-list') as HTMLUListElement | null;
   const spinCountInput = document.getElementById('spin-count') as HTMLInputElement | null;
+  const spinSpeedInput = document.getElementById('spin-speed') as HTMLInputElement | null;
   const minusSpinCountButton = document.getElementById('minus-button') as HTMLButtonElement | null;
   const plusSpinCountButton = document.getElementById('plus-button') as HTMLButtonElement | null;
   const removeNameFromListCheckbox = document.getElementById('remove-from-list') as HTMLInputElement | null;
@@ -35,6 +36,7 @@ import SoundEffects from '@js/SoundEffects';
     && winnerList
     && nameListUlist
     && spinCountInput
+    && spinSpeedInput
     && minusSpinCountButton
     && plusSpinCountButton
     && removeNameFromListCheckbox
@@ -189,6 +191,8 @@ import SoundEffects from '@js/SoundEffects';
     nameListUlist.dataset.value = slot.names.length ? slot.names.join('\n') : checkedNames.join('\n');
     slot.names = nameListUlist.dataset.value.split(/\n/).filter((name) => Boolean(name.trim()));
     slot.spinCount = +spinCountInput.value;
+    const spinSpeed = +spinSpeedInput.value;
+    slot.reelSpeed = 1 + (spinSpeed - 3) * 0.33;
     slot.shouldRemoveWinnerFromNameList = removeNameFromListCheckbox.checked;
     soundEffects.mute = !enableSoundCheckbox.checked;
     onSettingsClose();

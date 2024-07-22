@@ -1,5 +1,5 @@
 .input-group {
-  margin: 0 0 4rem 0;
+  margin: 0 0 2rem 0;
 
   &--2-column {
     display: flex;
@@ -153,4 +153,10 @@
         $switch-handle-diameter
     );
   }
+}
+
+datalist#speed-options {
+  display: flex;
+  justify-content: space-between;
+  width: 105%;
 }

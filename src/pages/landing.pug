@@ -34,7 +34,7 @@ include ../mixins/icons
         h1.settings__title Settings
         div.input-group
           label.input-label(for="name-list") Name List
-          - var members = ['구본연', '박주선', '이승호', '이현규', '이혜성', '임우진', '전인구', '차현석', '한기문', '황보현']
+          - var members = ['구본연', '박주선', '이승호', '이현규', '이혜성', '임우진', '전인구', '차현석', '한기문', '황보현', '조성훈']
           ul.input-list#name-list
             each member in members
               li.input-list__item
@@ -44,14 +44,23 @@ include ../mixins/icons
 
 
         div.input-group.input-group--flex-column
-            - var memberCount = 10
+            - var memberCount = 11
             label.input-label(for="spin-count") Number of winners
             div.input--number-wrapper
               button(type="button", id="minus-button") -
               input.input--number(type="number" value="1" id="spin-count" min="1" max=memberCount)
               button(type="button", id="plus-button") +
 
-
+        div.input-group.input-group--flex-column
+            label.input-label(for="spin-speed") Spin Speed
+            //-  slower > slow > normal > fast > faster
+            input.input--range(type="range" id="spin-speed" min="1" max="5" value="3" list="speed-options")
+            datalist#speed-options
+              option(value="1") Slower
+              option(value="2") Slow
+              option(value="3") Normal
+              option(value="4") Fast
+              option(value="5") Faster
 
         div.input-group.input-group--2-column
           label.input-label(for="remove-from-list") Remove winner from list

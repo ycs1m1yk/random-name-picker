@@ -3,6 +3,8 @@ interface SlotConfigurations {
   maxReelItems?: number;
   /** User configuration for number of times the reel spins */
   spinCount?: number;
+  /** User configuration for adjust speed of the reel */
+  reelSpeed?: number;
   /** User configuration for whether winner should be removed from name list */
   removeWinner?: boolean;
   /** User configuration for element selector which reel items should append to */
@@ -23,6 +25,9 @@ export default class Slot {
 
   /** Number of times the reel spins */
   private spinTimes: number;
+
+  /** Speed of the reel */
+  private spinSpeed: number;
 
   /** Whether there is a previous winner element displayed in reel */
   private havePreviousWinner: boolean;
@@ -58,8 +63,9 @@ export default class Slot {
    */
   constructor(
     {
-      maxReelItems = 10,
+      maxReelItems = 11,
       spinCount = 1,
+      reelSpeed = 3,
       removeWinner = true,
       reelContainerSelector,
       onSpinStart,
@@ -72,6 +78,7 @@ export default class Slot {
     this.reelContainer = document.querySelector(reelContainerSelector);
     this.maxReelItems = maxReelItems;
     this.spinTimes = spinCount;
+    this.spinSpeed = reelSpeed;
     this.shouldRemoveWinner = removeWinner;
     this.onSpinStart = onSpinStart;
     this.onSpinEnd = onSpinEnd;
@@ -88,7 +95,7 @@ export default class Slot {
         { transform: `translateY(-${(this.maxReelItems - 1) * (7.5 * 16)}px)`, filter: 'blur(0)' }
       ],
       {
-        duration: this.maxReelItems * 30, // 30ms for 1 item
+        duration: this.maxReelItems * 60, // 60ms for 1 item
         easing: 'ease-in-out',
         iterations: 1
       }
@@ -105,6 +112,17 @@ export default class Slot {
   /** Getter for spin count */
   get spinCount(): number {
     return this.spinTimes;
+  }
+
+  /** Setter for reel speed */
+  set reelSpeed(speed: number) {
+    this.spinSpeed = speed;
+    this.reelAnimation?.updatePlaybackRate(speed);
+  }
+
+  /** Getter for reel speed */
+  get reelSpeed(): number {
+    return this.spinSpeed;
   }
 
   /**
