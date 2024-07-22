@@ -10,7 +10,7 @@ interface SlotConfigurations {
   /** User configuration for element selector which reel items should append to */
   reelContainerSelector: string;
   /** User configuration for callback function that runs before spinning reel */
-  onSpinStart?: (playbackRate: number) => void;
+  onSpinStart?: () => void;
   /** User configuration for callback async function that runs after spinning reel */
   onSpinEnd?: (winner: string) => Promise<void>;
 
@@ -197,7 +197,7 @@ export default class Slot {
     }
 
     if (this.onSpinStart) {
-      this.onSpinStart(this.spinSpeed);
+      this.onSpinStart();
     }
 
     const { reelContainer, reelAnimation, shouldRemoveWinner } = this;

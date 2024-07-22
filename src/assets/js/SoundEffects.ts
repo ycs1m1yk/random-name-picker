@@ -24,12 +24,16 @@ export default class SoundEffects {
   /** Indicator for whether this sound effect instance is muted */
   private isMuted: boolean;
 
-  constructor(isMuted = false) {
+  /** Playback rate of the sound effect */
+  private playbackRate: number;
+
+  constructor(isMuted = false, playbackRate = 1) {
     if (window.AudioContext || window.webkitAudioContext) {
       this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
 
     this.isMuted = isMuted;
+    this.playbackRate = playbackRate;
   }
 
   /** Setter for isMuted */
@@ -40,6 +44,11 @@ export default class SoundEffects {
   /** Getter for isMuted */
   get mute(): boolean {
     return this.isMuted;
+  }
+
+  /** Setter for playbackRate */
+  set rate(rate: number) {
+    this.playbackRate = rate;
   }
 
   /**
@@ -93,12 +102,12 @@ export default class SoundEffects {
     }
 
     const musicNotes: SoundSeries[] = [
-      { key: 'C4', duration: 0.175 },
-      { key: 'D4', duration: 0.175 },
-      { key: 'E4', duration: 0.175 },
-      { key: 'G4', duration: 0.275 },
-      { key: 'E4', duration: 0.15 },
-      { key: 'G4', duration: 0.9 }
+      { key: 'C4', duration: 0.175 / this.playbackRate },
+      { key: 'D4', duration: 0.175 / this.playbackRate },
+      { key: 'E4', duration: 0.175 / this.playbackRate },
+      { key: 'G4', duration: 0.275 / this.playbackRate },
+      { key: 'E4', duration: 0.15 / this.playbackRate },
+      { key: 'G4', duration: 0.9 / this.playbackRate }
     ];
     const totalDuration = musicNotes
       .reduce((currentNoteTime, { duration }) => currentNoteTime + duration, 0);
@@ -117,15 +126,15 @@ export default class SoundEffects {
    * @param durationInSecond  Duration of sound effect in seconds
    * @returns Has sound effect been played
    */
-  public spin(durationInSecond: number, durationEach: number): Promise<boolean> {
+  public spin(durationInSecond: number): Promise<boolean> {
     if (this.isMuted) {
       return Promise.resolve(false);
     }
 
     const musicNotes: SoundSeries[] = [
-      { key: 'D#3', duration: durationEach },
-      { key: 'C#3', duration: durationEach },
-      { key: 'C3', duration: durationEach }
+      { key: 'D#3', duration: 0.1 / this.playbackRate },
+      { key: 'C#3', duration: 0.1 / this.playbackRate },
+      { key: 'C3', duration: 0.1 / this.playbackRate }
     ];
 
     const totalDuration = musicNotes
