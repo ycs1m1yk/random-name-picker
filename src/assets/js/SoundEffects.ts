@@ -102,12 +102,15 @@ export default class SoundEffects {
     }
 
     const musicNotes: SoundSeries[] = [
-      { key: 'C4', duration: 0.175 / this.playbackRate },
-      { key: 'D4', duration: 0.175 / this.playbackRate },
-      { key: 'E4', duration: 0.175 / this.playbackRate },
-      { key: 'G4', duration: 0.275 / this.playbackRate },
-      { key: 'E4', duration: 0.15 / this.playbackRate },
-      { key: 'G4', duration: 0.9 / this.playbackRate }
+      // playbackRate is used to adjust the speed of the sound effect
+      // but it should not be less than 1
+      const playbackRate = Math.max(1, this.playbackRate);
+      { key: 'C4', duration: 0.175 / playbackRate },
+      { key: 'D4', duration: 0.175 / playbackRate },
+      { key: 'E4', duration: 0.175 / playbackRate },
+      { key: 'G4', duration: 0.275 / playbackRate },
+      { key: 'E4', duration: 0.15 / playbackRate },
+      { key: 'G4', duration: 0.9 / playbackRate }
     ];
     const totalDuration = musicNotes
       .reduce((currentNoteTime, { duration }) => currentNoteTime + duration, 0);
