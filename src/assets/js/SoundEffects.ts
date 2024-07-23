@@ -101,10 +101,10 @@ export default class SoundEffects {
       return Promise.resolve(false);
     }
 
+    // playbackRate is used to adjust the speed of the sound effect
+    // but it should not be less than 1
+    const playbackRate = Math.max(1, this.playbackRate);
     const musicNotes: SoundSeries[] = [
-      // playbackRate is used to adjust the speed of the sound effect
-      // but it should not be less than 1
-      const playbackRate = Math.max(1, this.playbackRate);
       { key: 'C4', duration: 0.175 / playbackRate },
       { key: 'D4', duration: 0.175 / playbackRate },
       { key: 'E4', duration: 0.175 / playbackRate },
